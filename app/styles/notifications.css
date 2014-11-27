@@ -1,0 +1,32 @@
+
+div.sticky-queue {
+	position:fixed;
+	bottom: 0;
+	width: 100%;
+	color: #fefefe;
+  background: #5e82fd;
+  border-bottom: #405dbd solid 5px;
+  text-shadow: #405dbd 0 1px 0;
+}
+
+div.sticky {
+	display:none;
+	padding:25px;
+	position:relative;
+}
+
+img.sticky-close {
+	position:absolute;
+	top:50%;
+	right:35px;
+	height:14px;
+	width:14px;
+	margin-top: -9px;
+	cursor:pointer;
+}
+
+.error {
+  text-shadow: #c03434 0 1px 0;
+  background: #ea3b3b;
+  border-bottom: #c03434 solid 5px;
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>A simple map</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'>
+<script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js'></script>
+<script src='//code.jquery.com/jquery-1.11.1.min.js'></script>
+<script src='//api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet'>
+<link rel='stylesheet' type='text/css' href='styles/loading.css'>
+<link rel='stylesheet' type='text/css' href='styles/codrops.css'>
+<link rel="stylesheet" type="text/css" href='styles/notifications.css'>
+<link rel="stylesheet" type="text/css" href='styles/ns-default.css'>
+<link rel="stylesheet" type="text/css" href='styles/ns-style-growl.css'>
+
+<script src='scripts/modernizr.js'></script>
+<script src='scripts/snap.svg-min.js'></script>
+
+<style>
+  ul, ol { margin: 0; padding: 0; }
+
+  body { margin:0; padding:0; font-family: Helvetica, Arial, sans-serif; line-height: 1.618; font-size: 100%; }
+  #map { background: #f6f7f7; position:absolute; top:0; bottom:0; width:100%; }
+  .pageload-overlay svg path { fill: #cf1b41; }
+  #loader, #loader h1, .cfa-logo { z-index: 9999; }
+
+  .marker-list { position: absolute; top: 0; right: 0; width: 300px; height: 100%; background: #cf1b41; overflow-y: scroll; z-index: 99999; }
+  .marker-list li { display: block; color: #333; text-transform: lowercase; border-bottom: #bc1b41 solid 1px; }
+  .marker-list li a { color: #fefefe; padding: 10px 15px; display: block; font-weight: normal; }
+
+  .marker-list li.logo { background: #cf1b41; position: fixed; top: 0; width: 300px; }
+  .marker-list li.logo + li { margin-top: 113px; }
+
+  .cfa-logo { width: 100%; box-shadow: display: none; padding:15px; }
+  .cfa-logo svg { width: 100%; }
+  .cfa-logo svg path { fill: #fefefe; }
+
+  .ns-effect-jelly { font-size: 16px; border: #fefefe solid 2px; background: rgba(10, 10, 10, 0.6); text-shadow: #000 0 1px 0; box-shadow: #aaa 1px 1px 0; color: #fefefe; }
+  .ns-box { padding: 17px 30px; }
+  .ns-effect-jelly .ns-close::before, .ns-effect-jelly .ns-close::after { background: rgba(255, 255, 255, 0.7); }
+  .ns-effect-jelly .ns-close::before:hover, .ns-effect-jelly .ns-close::after:hover { background: rgba(255, 255, 255, 1.0); }
+  .ns-growl { left: 49px; top: 9px; border-radius: 0; }
+</style>
+</head>
+<body>
+  <ul class="marker-list">
+    <li class="logo">
+      <a href="http://codeforrva.org" class="cfa-logo" target="blank">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 488 145.1" enable-background="new 0 0 488 145.1" xml:space="preserve">
+          <g>
+          	<path d="M19.6,74.4c16.6-9.1,33.2-18.1,49.8-27.2c5.5-3,10.9-6.1,16.5-9c5.1-2.6,8.9-1.7,11,2.4c2,4,0.7,7.2-4.4,10
+            	C79.3,58,66.1,65.2,52.8,72.5c-1.2,0.7-2.4,1.4-4.2,2.4c8.9,4.9,17.4,9.6,25.8,14.2c5.3,2.9,10.7,5.9,16,8.8
+            	c6.9,3.9,8.7,7.2,6.1,11.5c-2.5,4.3-6.1,4.5-13.2,0.7c-19.9-11-39.8-21.9-59.7-32.9c-1.3-0.7-2.7-1.3-4.1-1.9
+            	C19.6,75.1,19.6,74.7,19.6,74.4z"/>
+            <path d="M468.4,75.4c-17.7,9.6-35.4,19.2-53,28.9c-4.7,2.6-9.3,5.2-14.1,7.6c-4.5,2.2-8.2,1.1-10.2-2.7
+            	c-1.9-3.7-0.8-7.1,3.5-9.6c13.3-7.5,26.7-14.8,40.1-22.1c1.3-0.7,2.6-1.5,4.5-2.5c-1.6-1-2.8-1.7-4-2.4
+            	c-12.4-6.9-24.9-13.7-37.3-20.5c-1.6-0.9-3.2-1.8-4.7-2.8c-3.1-2.2-3.7-5.2-2-8.5c1.7-3.5,4.8-4.7,8.5-3.4c2,0.7,3.9,1.8,5.7,2.8
+            	c19.5,10.7,39,21.5,58.5,32.3c1.5,0.8,3,1.4,4.5,2.2C468.4,74.7,468.4,75.1,468.4,75.4z"/>
+            <path d="M296.9,18c0,35.3,0,70.5,0,105.9c-59.6,0-119,0-178.8,0c0-35.2,0-70.4,0-105.9C177.6,18,237.1,18,296.9,18z
+            	 M286.5,76.7c-52.8,0-105.1,0-157.6,0c0,4.2,0,8.1,0,12.1c52.7,0,105.1,0,157.6,0C286.5,84.7,286.5,80.9,286.5,76.7z M285.7,100.6
+            	c-52.9,0-105.2,0-157.5,0c0,4.3,0,8.2,0,12c52.7,0,105,0,157.5,0C285.7,108.5,285.7,104.7,285.7,100.6z M286.5,52.9
+            	c-26.5,0-52.5,0-78.7,0c0,4.2,0,8.1,0,12.1c26.4,0,52.5,0,78.7,0C286.5,60.8,286.5,57,286.5,52.9z M286.3,41.6c0-4.3,0-8.3,0-12.3
+            	c-26.3,0-52.2,0-78.3,0c0,4.3,0,8.3,0,12.3C234.3,41.6,260.3,41.6,286.3,41.6z"/>
+            <path d="M323.5,128.6c-4,0-7.1-3.7-6.1-8.2c0.3-1.3,0.8-2.6,1.4-3.9c14.5-31.3,29-62.5,43.7-93.7
+            	c1.1-2.4,3.3-5.2,5.6-5.9c5.4-1.8,9.8,3.6,7.5,9.2c-3.3,7.9-7,15.6-10.6,23.3c-11.2,24.2-22.4,48.4-33.6,72.6
+            	C329.9,125.2,328.5,128.7,323.5,128.6z"/>
+          </g>
+        </svg>
+      </a>
+    </li>
+  </ul>
+	<div id='map'></div>
+  <div id="loader" class="pageload-overlay" data-opening="m -5,-5 0,70 90,0 0,-70 z m 5,35 c 0,0 15,20 40,0 25,-20 40,0 40,0 l 0,0 C 80,30 65,10 40,30 15,50 0,30 0,30 z">
+		<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 80 60" preserveAspectRatio="none" >
+			<path d="m -5,-5 0,70 90,0 0,-70 z m 5,5 c 0,0 7.9843788,0 40,0 35,0 40,0 40,0 l 0,60 c 0,0 -3.944487,0 -40,0 -30,0 -40,0 -40,0 z"/>
+		</svg>
+  </div>
+  <script src='scripts/classie.js'></script>
+  <script src='scripts/svgLoader.js'></script>
+  <script src='scripts/notificationFx.js'></script>
+  <script src='scripts/main.js'></script>
+</body>
+</html>
+
