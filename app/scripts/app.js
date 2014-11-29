@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'svgloader', 'mapbox'], function($, _, SVGLoader, mapbox) {
+define(['jquery', 'underscore', 'svgloader', 'mapbox', 'modernizr'], function($, _, SVGLoader, mapbox) {
   var members = {
     elements: {
       loader: document.getElementById('loader'),

@@ -6,12 +6,16 @@ require.config({
     mapbox: ['//api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox', 'vendor/mapbox'],
     classie: 'vendor/classie',
     snap: 'vendor/snap',
+    modernizr: 'vendor/modernizr',
     svgloader: 'vendor/svgloader'
   },
 
   shim: {
+    modernizr: {
+      exports: "modernizr"
+    },
     svgloader: {
-      deps: ["snap", "classie"],
+      deps: ["snap"],
       exports: "SVGLoader"
     },
     mapbox: {
