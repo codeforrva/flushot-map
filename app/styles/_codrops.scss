@@ -58,7 +58,7 @@
 
 .pageload-overlay::before {
 	background: #fff;
-		opacity: 1.0;
+		opacity: 0.8;
 	-webkit-transform: translateX(20px);
 	transform: translateX(20px);
 	-webkit-animation: moveLeft 0.6s linear infinite alternate;
