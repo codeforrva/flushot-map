@@ -12,7 +12,7 @@ require.config({
 
   shim: {
     modernizr: {
-      exports: "modernizr"
+      exports: "window.Modernizr"
     },
     svgloader: {
       deps: ["snap"],

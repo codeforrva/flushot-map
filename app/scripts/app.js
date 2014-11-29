@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'svgloader', 'mapbox', 'modernizr'], function($, _, SVGLoader, mapbox) {
+define(['jquery', 'underscore', 'svgloader', 'mapbox', 'modernizr'], function($, _, SVGLoader, Mapbox, Modernizr) {
   var members = {
     elements: {
       loader: document.getElementById('loader'),
@@ -13,27 +13,50 @@ define(['jquery', 'underscore', 'svgloader', 'mapbox', 'modernizr'], function($,
   };
 
   var initialize = function() {
-    mapbox.accessToken = members.options.accessToken;
+    Mapbox.accessToken = members.options.accessToken;
 
     // Show the loading screen
     var loader = new SVGLoader(members.elements.loader, { speedIn: 400, easingIn: mina.easeinout });
     loader.show();
 
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var map = mapbox.map('map', members.options.mapID),
-      layer = mapbox.tileLayer(members.options.mapID);
-      // featureLayer = L.mapbox.featureLayer().loadURL('../data/flushots.json').addTo(map);
+    // Check for geolocation capabilities
+    if(Modernizr.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var map = Mapbox.map('map', members.options.mapID),
+            layer = Mapbox.tileLayer(members.options.mapID),
+            featureLayer = Mapbox.featureLayer().loadURL('../data/flushots.json').addTo(map);
 
-      // Build marker menu
-      map.featureLayer.on('ready', function(e) {
-        var markers = [];
-        this.eachLayer(function(marker) { markers.push(marker); });
+        // Build marker menu
+        map.featureLayer.on('ready', function(e) {
+          var markers = [];
+          this.eachLayer(function(marker) { markers.push(marker); });
 
-        buildMarkerList(markers);
-      });
+          buildMarkerList(markers);
+        });
 
-      // Center the map on the location of the user
-      map.setView([position.coords.latitude, position.coords.longitude], members.options.mapZoomLevel);
+        // Center the map on the location of the user
+        map.setView([position.coords.latitude, position.coords.longitude], members.options.mapZoomLevel);
+
+        // Ensure our loading screen is visible long enough
+        // to finish the start animation
+        setTimeout(function() {
+          loader.hide();
+          $('.marker-list').show();
+        }, 1000);
+
+        var marker = L.marker([position.coords.latitude, position.coords.longitude], {
+          icon: Mapbox.marker.icon({
+            'marker-color': '#f86767',
+            'marker-symbol': 'heart'
+          }), draggable: false
+        }).addTo(map);
+      }, handleGeolocationErrors);
+    }
+    else {
+      var map = Mapbox.map('map', members.options.mapID),
+          layer = Mapbox.tileLayer(members.options.mapID);
+
+      map.setView([37.543495, -77.438545], members.options.mapZoomLevel);
 
       // Ensure our loading screen is visible long enough
       // to finish the start animation
@@ -41,23 +64,16 @@ define(['jquery', 'underscore', 'svgloader', 'mapbox', 'modernizr'], function($,
         loader.hide();
         $('.marker-list').show();
       }, 1000);
-
-      var marker = L.marker([position.coords.latitude, position.coords.longitude], {
-        icon: mapbox.marker.icon({
-          'marker-color': '#f86767',
-          'marker-symbol': 'heart'
-        }), draggable: false
-      }).addTo(map);
-    }, handleGeolocationErrors);
+    }
   };
 
   var handleGeolocationErrors = function(error) {
-    mapbox.accessToken = members.options.accessToken;
+    Mapbox.accessToken = members.options.accessToken;
 
     // Check for errors of any type (network, permission, or failure)
     // and set our center coordinates manually
     if(error.code == 1 || error.code == 2 || error.code == 3) {
-      var layer = mapbox.tileLayer(members.options.mapID);
+      var layer = Mapbox.tileLayer(members.options.mapID);
       map.setView([37.543495, -77.438545], members.mapConfig.mapZoomLevel);
     }
 
